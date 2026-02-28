@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Cinematic Cost Matrix</title>
+    <title>AI Cinematic Cost Matrix 🎬</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f0f4f8; /* 浅灰蓝背景 */
+            --bg-color: #f0f4f8;
             --panel-bg: #ffffff;
-            --text-main: #2c3e50; /* 深蓝文字 */
-            --text-sub: #7f8c8d; /* 灰色文字 */
-            --primary: #3498db; /* 亮蓝色 */
-            --primary-light: #e6f2fa; /* 浅蓝背景 */
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --primary: #3498db;
+            --primary-light: #e6f2fa;
             --border: #dfe6ee;
             --radius: 10px;
         }
@@ -22,13 +22,24 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             display: flex;
-            justify-content: center;
-            align-items: center; /* 垂直居中 */
+            flex-direction: column;
+            align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow: hidden; /* 防止背景网格溢出滚动 */
-            position: relative;
+            padding: 20px;
+            box-sizing: border-box;
         }
+
+        /* ⬇️ 图片适配核心 CSS ⬇️ */
+        .header-image {
+            width: 100%;
+            max-width: 700px; /* 电脑上最大宽度 */
+            height: auto;
+            margin-bottom: 25px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        /* ⬆️ 图片适配核心 CSS ⬆️ */
 
         /* 科技感网格背景 */
         body::before {
@@ -38,21 +49,20 @@
             background-image: linear-gradient(0deg, transparent 9%, rgba(0,0,0,.04) 10%, rgba(0,0,0,.04) 12%, transparent 13%),
                               linear-gradient(90deg, transparent 9%, rgba(0,0,0,.04) 10%, rgba(0,0,0,.04) 12%, transparent 13%);
             background-size: 50px 50px;
-            opacity: 0.5;
-            z-index: 0;
+            opacity: 0.3;
+            z-index: -1;
         }
 
         .container {
             background: var(--panel-bg);
             padding: 35px;
             border-radius: var(--radius);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.05);
-            width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            width: 100%;
             max-width: 480px;
             border: 1px solid var(--border);
-            z-index: 1; /* 确保内容在网格之上 */
-            opacity: 0; /* 初始隐藏 */
-            animation: fadeIn 0.8s forwards ease-out; /* 淡入动画 */
+            animation: fadeIn 0.8s ease-out;
+            box-sizing: border-box;
         }
 
         @keyframes fadeIn {
@@ -64,10 +74,8 @@
             text-align: center;
             color: var(--primary);
             margin-bottom: 30px;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
         }
 
         .group { margin-bottom: 1.5rem; }
@@ -78,17 +86,7 @@
             margin-bottom: 0.6rem; 
             color: var(--text-sub);
             font-weight: 500;
-            letter-spacing: 0.5px;
-            display: flex; /* 允许图标和文字对齐 */
-            align-items: center;
         }
-        label::before { /* 小图标 */
-            content: attr(data-icon);
-            margin-right: 8px;
-            color: var(--primary);
-            font-size: 1em;
-        }
-
 
         select, input { 
             width: 100%; 
@@ -96,13 +94,12 @@
             border: 1px solid var(--border); 
             border-radius: var(--radius); 
             font-size: 1rem; 
-            background: var(--primary-light); /* 浅蓝色背景 */
+            background: var(--primary-light);
             color: var(--text-main);
             outline: none;
             transition: all 0.3s ease;
             box-sizing: border-box;
-            -webkit-appearance: none; /* 移除原生 select 样式 */
-            -moz-appearance: none;
+            -webkit-appearance: none;
             appearance: none;
             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%233498db%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.1L146.2%20200.2%2018.3%2074.5a17.6%2017.6%200%200%200-25.3%2023.7l137.4%20137.2c.7.7%201.7%201.2%202.6%201.6l1.3.8c.8.5%201.7.9%202.7%201.2s2.1.4%203.2.4%202.1-.1%203.2-.4c1-.3%201.9-.7%202.7-1.2l1.3-.8c.9-.4%201.9-.9%202.6-1.6L299.4%2098.2a17.6%2017.6%200%200%200-12.9-28.8z%22%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
@@ -112,8 +109,8 @@
 
         select:focus, input:focus { 
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2); /* 柔和的发光 */
-            background-color: white; /* 聚焦时变为白色背景 */
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background-color: white;
         }
 
         .result-card { 
@@ -123,22 +120,13 @@
             margin-top: 2.5rem; 
             text-align: center; 
             border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
-        }
-        .result-card::before { /* 顶部装饰线 */
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 3px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
         }
 
         .total-price { 
-            font-size: 2.4rem; 
+            font-size: 2.2rem; 
             font-weight: 700; 
             color: var(--primary);
             margin-top: 15px;
-            letter-spacing: 0.5px;
         }
 
         .note { font-size: 0.85rem; color: var(--text-sub); margin-top: 10px; line-height: 1.4; }
@@ -146,23 +134,27 @@
 </head>
 <body>
 
-<div class="container">
-    <h2>AI Cinematic Cost Matrix</h2>
+    <img src="https://github.com/foreverai2026/ai-price-calculator/blob/main/%E9%A1%B6%E9%83%A8%E5%9B%BE_%E5%89%AF%E6%9C%AC.jpg?raw=true" alt="AI Cinematic Workflow" class="header-image">
+    <div class="container">
+    <h2>AI Cinematic Cost Matrix 📊🎬</h2>
     
     <div class="group">
-        <label data-icon="&#x1F3A5;">FUNCTION MODULE</label> <select id="funcSelect" onchange="initModels()"></select>
+        <label>FUNCTION MODULE 💡</label>
+        <select id="funcSelect" onchange="initModels()"></select>
     </div>
 
     <div class="group">
-        <label data-icon="&#x1F4BB;">MODEL UNIT</label> <select id="modelSelect" onchange="updateUI()"></select>
+        <label>MODEL UNIT 💻</label>
+        <select id="modelSelect" onchange="updateUI()"></select>
     </div>
 
     <div class="group" id="durationBox">
-        <label data-icon="&#x23F1;">QUANTITY</label> <input type="number" id="quantity" value="5" oninput="calculate()">
+        <label id="unitLabel">QUANTITY ⏱️</label>
+        <input type="number" id="quantity" value="5" oninput="calculate()">
     </div>
 
     <div class="result-card">
-        <label>TOTAL COST (RMB)</label>
+        <label>TOTAL COST (RMB) 💰</label>
         <div class="total-price" id="totalDisplay">¥ 0.00</div>
         <div class="note" id="priceNote">Initializing...</div>
     </div>
@@ -181,7 +173,7 @@
             functions.forEach(f => funcSelect.add(new Option(f, f)));
             initModels();
         } catch (e) {
-            document.getElementById('priceNote').innerText = "数据加载失败，请检查网络或稍后重试。";
+            document.getElementById('priceNote').innerText = "Data load error ⚠️";
         }
     }
 
@@ -196,13 +188,8 @@
 
     function updateUI() {
         const model = getSelectedModel();
-        if(!model) {
-             document.getElementById('unitLabel').innerText = "QUANTITY";
-             document.getElementById('priceNote').innerText = "请选择一个模型";
-             document.getElementById('totalDisplay').innerText = "¥ 0.00";
-             return;
-        }
-        document.getElementById('unitLabel').innerText = `INPUT (${model.unit})`;
+        if(!model) return;
+        document.getElementById('unitLabel').innerText = `INPUT (${model.unit}) ⏱️`;
         document.getElementById('priceNote').innerText = `Rate: ${model.price} ${model.currency} / ${model.unit}`;
         calculate();
     }
@@ -220,17 +207,13 @@
 
         if (model.unit === "5秒") {
             cost = Math.ceil(q / 5) * model.price;
-        } else if (model.unit === "调用") { // 新增的“调用”单位处理
-            cost = q * model.price;
-        }
-        else {
+        } else {
             cost = q * model.price;
         }
 
         if (model.currency === "USD") {
             cost = cost * rawData.config.usd_to_rmb;
         } else if (model.currency === "Points") {
-            // 假设积分换算逻辑：1积分 = 0.1 RMB，可根据实际情况调整
             cost = cost * 0.1; 
         }
 
