@@ -110,7 +110,7 @@
         }
 
         .highlight-text {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
@@ -151,7 +151,7 @@
                 </div>
             </div>
             <div class="result-box">
-                <label>折合成本单价 (RMB)</label>
+                <label>RMB 成本单价</label>
                 <div id="unitPriceDisplay" class="highlight-text">¥ 0.00</div>
                 <div id="unitTypeNote" class="note" style="font-size: 0.85rem; color: #64748b;">--</div>
             </div>
@@ -160,21 +160,21 @@
         <div class="card">
             <div class="section-title">02 生成成本计算器 🧮</div>
             <div class="group">
-                <label id="inputLabel">输入数量 (张/秒)</label>
-                <input type="number" id="quantity" value="1" oninput="calculateAll()">
+                <label id="inputLabel">输入数量 (整数)</label>
+                <input type="number" id="quantity" value="1" step="1" oninput="this.value=this.value.replace(/\D/g,'');calculateAll()">
             </div>
-            <div class="result-box" style="background: #f1f5f9;">
-                <label>总成本 (向上取整)</label>
-                <div id="totalCostDisplay" class="highlight-text" style="font-size: 2.5rem;">¥ 0.00</div>
+            <div class="result-box" style="background: #f1f5f9; border-style: solid;">
+                <label>计算结果成本</label>
+                <div id="totalCostDisplay" class="highlight-text" style="font-size: 2.6rem;">¥ 0.00</div>
             </div>
         </div>
 
         <div class="card" style="border: 1px solid #c7d2fe;">
             <div class="section-title">03 商业定价辅助方案 💡</div>
-            <p class="hint">ROI 模式：建议定价 = 单价 × ROI。结果执行向上取整，防止长尾亏损。</p>
-            <div class="grid-3" style="grid-template-columns: 1fr 2fr;">
+            <p class="hint">ROI 模式：建议定价 = 单价 × ROI。结果执行“分”级向上取整。</p>
+            <div class="grid-3" style="grid-template-columns: 1fr 2.5fr;">
                 <div class="group">
-                    <label>设定 ROI (倍数)</label>
+                    <label>设定 ROI</label>
                     <input type="number" id="roiInput" value="1.5" step="0.1" oninput="calculateAll()">
                 </div>
                 <div class="group">
@@ -229,9 +229,9 @@
         if(model.currency === "USD") priceInRMB = model.price * (rawData.config.usd_to_rmb || 7.2);
         if(model.currency === "Points") priceInRMB = model.price * 0.1;
 
-        // 涉及到钱的字段，保留两位小数
+        // 【区域一】保留两位小数，只抓取显示
         document.getElementById('unitPriceDisplay').innerText = `¥ ${priceInRMB.toFixed(2)}`;
-        document.getElementById('unitTypeNote').innerText = `单位：${model.unit} | 原始：${model.price}${model.currency}`;
+        document.getElementById('unitTypeNote').innerText = `计费单位：${model.unit} | 原始：${model.price}${model.currency}`;
         document.getElementById('inputLabel').innerText = `输入生成数量 / 时长 (${model.unit})`;
         
         calculateAll();
@@ -250,24 +250,25 @@
         if(model.currency === "USD") basePrice *= (rawData.config.usd_to_rmb || 7.2);
         if(model.currency === "Points") basePrice *= 0.1;
 
-        // 1. 计算总成本
-        const q = parseFloat(document.getElementById('quantity').value) || 0;
-        let rawTotal = 0;
-        if (model.unit === "5秒") {
-            rawTotal = Math.ceil(q / 5) * basePrice;
-        } else {
-            rawTotal = q * basePrice;
-        }
+        // 【区域二】成本计算：输入数量为整数，计算结果直接展示，保留两位小数
+        const qInput = document.getElementById('quantity');
+        const q = Math.floor(parseFloat(qInput.value)) || 0; // 强制按整数处理
         
-        // 计算结果均向上取整 (Ceil)，并保留两位小数
-        const finalTotal = Math.ceil(rawTotal); 
-        document.getElementById('totalCostDisplay').innerText = `¥ ${finalTotal.toFixed(2)}`;
+        let totalCost = 0;
+        if (model.unit === "5秒") {
+            totalCost = Math.ceil(q / 5) * basePrice;
+        } else {
+            totalCost = q * basePrice;
+        }
+        document.getElementById('totalCostDisplay').innerText = `¥ ${totalCost.toFixed(2)}`;
 
-        // 2. 辅助定价计算
+        // 【区域三】商业定价：向上取整（进一位到分，不取整到元）
         const roi = parseFloat(document.getElementById('roiInput').value) || 1;
-        const rawSuggested = basePrice * roi;
-        // 同样执行向上取整
-        const finalSuggested = Math.ceil(rawSuggested);
+        let rawSuggested = basePrice * roi;
+        
+        // 逻辑：向上取整到 0.01。例如 3.141 -> 3.15
+        const finalSuggested = Math.ceil(rawSuggested * 100) / 100;
+        
         document.getElementById('suggestedPrice').innerText = `¥ ${finalSuggested.toFixed(2)} / ${model.unit}`;
     }
 
