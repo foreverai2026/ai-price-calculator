@@ -502,6 +502,8 @@
         
         const imgModelId = document.getElementById('dramaImageSelect').value;
         const vidModelId = document.getElementById('dramaVideoSelect').value;
+        // 获取当前选择的可灵灵感值汇率
+        const klingRate = parseFloat(document.getElementById('klingRateSelect').value) || 0.1;
 
         const imgModel = rawData.models.find(m => m.official_id === imgModelId);
         const vidModel = rawData.models.find(m => m.official_id === vidModelId);
@@ -514,19 +516,21 @@
 
         // 换算生图 RMB 单价
         let imgPrice = imgModel.price;
-        if(imgModel.currency === "Points") imgPrice *= 0.03125; // 假设 Vidu 积分换算比例
+        if(imgModel.currency === "Points") imgPrice *= 0.03125; 
+        if(imgModel.currency === "灵感值") imgPrice *= klingRate; // 动态应用可灵汇率
 
         // 换算生视频 RMB 单价
         let vidPrice = vidModel.price;
         if(vidModel.currency === "Points") vidPrice *= 0.03125; 
-        if(vidModel.unit === "秒") vidPrice *= 10; // 若为单秒价，需乘10算一段
+        if(vidModel.currency === "灵感值") vidPrice *= klingRate; // 动态应用可灵汇率
+        if(vidModel.unit === "秒") vidPrice *= 10; 
         if(vidModel.unit === "5秒") vidPrice *= 2; 
 
         // 基础计算
         const rawFirstFrameCost = totalSegments * 10 * imgPrice;
         const rawVideoCost = totalSegments * 5 * vidPrice;
         
-        // 金额计算处理
+        // 财务级别计算处理：保留两位小数，结果向上取整
         const firstFrameCost = Math.ceil(rawFirstFrameCost * 100) / 100;
         const videoCost = Math.ceil(rawVideoCost * 100) / 100;
         const totalCost = Math.ceil((firstFrameCost + videoCost) * 100) / 100;
@@ -541,4 +545,5 @@
 </script>
 </body>
 </html>
+
 
