@@ -12,6 +12,7 @@
             --text-main: #1e293b;
             --text-sub: #64748b;
             --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --budget-gradient: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
             --border: #e2e8f0;
             --radius: 16px;
             --max-width: 700px;
@@ -46,6 +47,81 @@
             flex-direction: column;
             gap: 24px;
         }
+
+        /* --- Tab 样式 --- */
+        .tabs-container {
+            display: flex;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .tab-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--panel-bg);
+            border: 2px solid transparent;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            color: var(--text-sub);
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn.active {
+            border-color: #6366f1;
+            color: #1e293b;
+            background: #f8fafc;
+        }
+
+        .tab-btn[data-target="tab-budget"].active {
+            border-color: #ef4444;
+        }
+
+        .tab-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+            background-color: #f1f5f9;
+        }
+
+        .tab-btn.active .tab-avatar {
+            border-color: #6366f1;
+        }
+
+        .tab-btn[data-target="tab-budget"].active .tab-avatar {
+            border-color: #ef4444;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            gap: 24px;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* --- 结束 --- */
 
         .card {
             background: var(--panel-bg);
@@ -132,6 +208,7 @@
 
         @media (max-width: 600px) {
             .grid-3 { grid-template-columns: 1fr; }
+            .tabs-container { flex-direction: column; }
         }
     </style>
 </head>
@@ -140,80 +217,175 @@
     <img src="https://github.com/foreverai2026/ai-price-calculator/blob/main/%E9%A1%B6%E9%83%A8%E5%9B%BE_%E5%89%AF%E6%9C%AC.jpg?raw=true" class="header-image">
 
     <div class="container">
-        <div class="card">
-            <div class="section-title">🔍 01 模型库与单价查询</div>
-            <div class="title-line"></div>
-            <div class="section-desc">📑 同步市面热门 AI 模型计费规则，实时查询 API 原始采购成本。</div>
-            <div class="grid-3">
-                <div class="group">
-                    <label>生成能力</label>
-                    <select id="funcSelect" onchange="filterProviders()"></select>
+        
+        <div class="tabs-container">
+            <button class="tab-btn active" data-target="tab-api" onclick="switchTab('tab-api')">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Operation&style=circle&backgroundColor=e2e8f0" alt="运营职员" class="tab-avatar">
+                <span>API 调用价格</span>
+            </button>
+            <button class="tab-btn" data-target="tab-budget" onclick="switchTab('tab-budget')">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Creator&style=circle&backgroundColor=fecdd3" alt="创作者" class="tab-avatar">
+                <span>AI 视频预算分析</span>
+            </button>
+        </div>
+
+        <div id="tab-api" class="tab-content active">
+            <div class="card">
+                <div class="section-title">🔍 01 模型库与单价查询</div>
+                <div class="title-line"></div>
+                <div class="section-desc">📑 同步市面热门 AI 模型计费规则，实时查询 API 原始采购成本 [cite: 5, 6]。</div>
+                <div class="grid-3">
+                    <div class="group">
+                        <label>生成能力</label>
+                        <select id="funcSelect" onchange="filterProviders()"></select>
+                    </div>
+                    <div class="group">
+                        <label>模型厂商</label>
+                        <select id="providerSelect" onchange="filterVersions()"></select>
+                    </div>
+                    <div class="group">
+                        <label>模型版本</label>
+                        <select id="versionSelect" onchange="updateUnitPrice()"></select>
+                    </div>
                 </div>
-                <div class="group">
-                    <label>模型厂商</label>
-                    <select id="providerSelect" onchange="filterVersions()"></select>
-                </div>
-                <div class="group">
-                    <label>模型版本</label>
-                    <select id="versionSelect" onchange="updateUnitPrice()"></select>
+                <div class="result-box">
+                    <label>折合成本单价 (RMB)</label>
+                    <div id="unitPriceDisplay" class="highlight-text">¥ 0.00</div>
+                    <div id="unitTypeNote" class="note" style="font-size: 0.85rem; color: #64748b; margin-top:5px;">--</div>
                 </div>
             </div>
-            <div class="result-box">
-                <label>折合成本单价 (RMB)</label>
-                <div id="unitPriceDisplay" class="highlight-text">¥ 0.00</div>
-                <div id="unitTypeNote" class="note" style="font-size: 0.85rem; color: #64748b; margin-top:5px;">--</div>
+
+            <div class="card">
+                <div class="section-title">🧮 02 生产成本核算器</div>
+                <div class="title-line"></div>
+                <div class="section-desc">📏 根据预期的生成规模，快速估算本次生产任务的原始 API 支出总额 [cite: 33, 34]。</div>
+                <div class="group">
+                    <label id="inputLabel">输入生成数量 (整数)</label>
+                    <input type="number" id="quantity" value="1" step="1" oninput="this.value=this.value.replace(/\D/g,'');calculateAll()">
+                </div>
+                <div class="result-box" style="background: #f1f5f9; border-style: solid;">
+                    <label>预估总成本</label>
+                    <div id="totalCostDisplay" class="highlight-text" style="font-size: 2.6rem;">¥ 0.00</div>
+                </div>
+            </div>
+
+            <div class="card" style="border: 1px solid #c7d2fe;">
+                <div class="section-title">💡 03 商业零售定价助手</div>
+                <div class="title-line"></div>
+                <div class="section-desc">📢 如果你通过 API 调用后向用户收费，则可用此功能辅助计算零售定价 [cite: 36]。基于成本单价，通过调整 ROI（投资回报倍数）来核算面向终端用户的建议零售价格 [cite: 38, 39]。</div>
+                
+                <div class="grid-3" style="grid-template-columns: 1fr 2.5fr;">
+                    <div class="group">
+                        <label>设定预期 ROI</label>
+                        <input type="number" id="roiInput" value="1.5" step="0.1" oninput="calculateAll()">
+                    </div>
+                    <div class="group">
+                        <label>建议零售定价 (对用户价)</label>
+                        <div id="suggestedPrice" class="highlight-text" style="padding-top: 5px;">¥ 0.00</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="section-title">🧮 02 生产成本核算器</div>
-            <div class="title-line"></div>
-            <div class="section-desc">📏 根据预期的生成规模，快速估算本次生产任务的原始 API 支出总额。</div>
-            <div class="group">
-                <label id="inputLabel">输入生成数量 (整数)</label>
-                <input type="number" id="quantity" value="1" step="1" oninput="this.value=this.value.replace(/\D/g,'');calculateAll()">
-            </div>
-            <div class="result-box" style="background: #f1f5f9; border-style: solid;">
-                <label>预估总成本</label>
-                <div id="totalCostDisplay" class="highlight-text" style="font-size: 2.6rem;">¥ 0.00</div>
+        <div id="tab-budget" class="tab-content">
+            <div class="card" style="border: 1px solid #fca5a5;">
+                <div class="section-title">🎬 AI 短剧预算分析</div>
+                <div class="title-line" style="background: var(--budget-gradient);"></div>
+                <div class="section-desc">🧑‍🎨 专为个人创作者设计。设置专业创作流（角色生成-分镜生成-视频生成），得知创作一部短剧需要多少钱 [cite: 8, 9]。</div>
+                
+                <div class="grid-3">
+                    <div class="group">
+                        <label>每集时长 (秒)</label>
+                        <input type="number" id="epDuration" value="60" step="10" oninput="calculateDramaBudget()">
+                    </div>
+                    <div class="group">
+                        <label>集数 (整数)</label>
+                        <input type="number" id="epCount" value="10" step="1" oninput="calculateDramaBudget()">
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                    <div class="group">
+                        <label>首帧生成模型 (生图)</label>
+                        <select id="dramaImageSelect" onchange="calculateDramaBudget()"></select>
+                    </div>
+                    <div class="group">
+                        <label>视频生成模型 (生视频)</label>
+                        <select id="dramaVideoSelect" onchange="calculateDramaBudget()"></select>
+                    </div>
+                </div>
+
+                <div class="result-box" style="background: #fff1f2; border-color: #fecdd3; margin-top: 10px;">
+                    <label style="color: #be123c;">预估短剧总成本 (RMB)</label>
+                    <div id="dramaTotalCost" class="highlight-text" style="background: var(--budget-gradient); -webkit-background-clip: text;">¥ 0.00</div>
+                    <div id="dramaDetail" style="font-size: 0.85rem; color: #881337; margin-top: 8px;">
+                        规则：每10s需1个首帧(抽卡10次) + 1段视频(抽卡5次) [cite: 166, 167]
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card" style="border: 1px solid #c7d2fe;">
-            <div class="section-title">💡 03 商业零售定价助手</div>
-            <div class="title-line"></div>
-            <div class="section-desc">📢 如果你通过 API 调用后向用户收费，则可用此功能辅助计算零售定价。基于成本单价，通过调整 ROI（投资回报倍数）来核算面向终端用户的建议零售价格。</div>
-            
-            <div class="grid-3" style="grid-template-columns: 1fr 2.5fr;">
-                <div class="group">
-                    <label>设定预期 ROI</label>
-                    <input type="number" id="roiInput" value="1.5" step="0.1" oninput="calculateAll()">
-                </div>
-                <div class="group">
-                    <label>建议零售定价 (对用户价)</label>
-                    <div id="suggestedPrice" class="highlight-text" style="padding-top: 5px;">¥ 0.00</div>
-                </div>
-            </div>
-        </div>
     </div>
 
 <script>
     let rawData = {};
     const JSON_URL = 'https://raw.githubusercontent.com/foreverai2026/ai-price-calculator/main/prices.json';
 
+    // --- Tab 切换逻辑 ---
+    function switchTab(tabId) {
+        // 更新按钮状态
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            if(btn.dataset.target === tabId) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // 更新内容区状态
+        document.querySelectorAll('.tab-content').forEach(content => {
+            if(content.id === tabId) {
+                content.classList.add('active');
+            } else {
+                content.classList.remove('active');
+            }
+        });
+    }
+
+    // --- 数据加载与初始化 ---
     async function loadData() {
         try {
             const res = await fetch(JSON_URL);
             rawData = await res.json();
+            
+            // 初始化 API 面板下拉框
             const functions = [...new Set(rawData.models.map(m => m.function))];
             const funcSelect = document.getElementById('funcSelect');
             functions.forEach(f => funcSelect.add(new Option(f, f)));
             filterProviders();
+
+            // 初始化 短剧预算 面板下拉框
+            initDramaSelects();
+
         } catch (e) {
             console.error("数据加载失败");
         }
     }
 
+    function initDramaSelects() {
+        const imgSelect = document.getElementById('dramaImageSelect');
+        const vidSelect = document.getElementById('dramaVideoSelect');
+        
+        const imageModels = rawData.models.filter(m => m.function === '生图');
+        const videoModels = rawData.models.filter(m => m.function === '生视频');
+
+        imageModels.forEach(m => imgSelect.add(new Option(`${m.provider} - ${m.name}`, m.official_id)));
+        videoModels.forEach(m => vidSelect.add(new Option(`${m.provider} - ${m.name}`, m.official_id)));
+        
+        calculateDramaBudget();
+    }
+
+    // --- API 面板级联逻辑 ---
     function filterProviders() {
         const func = document.getElementById('funcSelect').value;
         const providers = [...new Set(rawData.models.filter(m => m.function === func).map(m => m.provider))];
@@ -233,14 +405,23 @@
         updateUnitPrice();
     }
 
+    function getSelectedModel(funcId, provId, verId) {
+        const func = document.getElementById(funcId).value;
+        const prov = document.getElementById(provId).value;
+        const id = document.getElementById(verId).value;
+        return rawData.models.find(m => m.function === func && m.provider === prov && m.official_id === id);
+    }
+
+    // --- API 面板计算逻辑 ---
     function updateUnitPrice() {
-        const model = getSelectedModel();
+        const model = getSelectedModel('funcSelect', 'providerSelect', 'versionSelect');
         if(!model) return;
         
         let priceInRMB = model.price;
         if(model.currency === "USD") priceInRMB = model.price * (rawData.config.usd_to_rmb || 7.2);
-        if(model.currency === "Points") priceInRMB = model.price * 0.1;
+        if(model.currency === "Points") priceInRMB = model.price * 0.1; // 默认汇率，可根据实际调整
 
+        // 统一格式化处理
         document.getElementById('unitPriceDisplay').innerText = `¥ ${priceInRMB.toFixed(2)}`;
         document.getElementById('unitTypeNote').innerText = `计费单位：${model.unit} | 原始报价：${model.price}${model.currency}`;
         document.getElementById('inputLabel').innerText = `⏱️ 输入生成数量 / 时长 (${model.unit})`;
@@ -248,15 +429,8 @@
         calculateAll();
     }
 
-    function getSelectedModel() {
-        const id = document.getElementById('versionSelect').value;
-        return rawData.models.find(m => m.function === document.getElementById('funcSelect').value && 
-                                       m.provider === document.getElementById('providerSelect').value && 
-                                       m.official_id === id);
-    }
-
     function calculateAll() {
-        const model = getSelectedModel();
+        const model = getSelectedModel('funcSelect', 'providerSelect', 'versionSelect');
         if(!model) return;
 
         let basePrice = model.price;
@@ -266,21 +440,67 @@
         const qInput = document.getElementById('quantity');
         const q = Math.floor(parseFloat(qInput.value)) || 0; 
         
-        let totalCost = 0;
+        let rawTotalCost = 0;
         if (model.unit === "5秒") {
-            totalCost = Math.ceil(q / 5) * basePrice;
+            rawTotalCost = Math.ceil(q / 5) * basePrice;
         } else {
-            totalCost = q * basePrice;
+            rawTotalCost = q * basePrice;
         }
+
+        // 金额计算处理
+        const totalCost = Math.ceil(rawTotalCost * 100) / 100;
         document.getElementById('totalCostDisplay').innerText = `¥ ${totalCost.toFixed(2)}`;
 
         const roi = parseFloat(document.getElementById('roiInput').value) || 1;
         let rawSuggested = basePrice * roi;
-        const finalSuggested = Math.ceil(rawSuggested * 100) / 100;
         
+        // 金额计算处理
+        const finalSuggested = Math.ceil(rawSuggested * 100) / 100;
         document.getElementById('suggestedPrice').innerText = `¥ ${finalSuggested.toFixed(2)} / ${model.unit}`;
     }
 
+    // --- 短剧预算计算逻辑 ---
+    function calculateDramaBudget() {
+        const epDuration = parseInt(document.getElementById('epDuration').value) || 0; 
+        const epCount = parseInt(document.getElementById('epCount').value) || 0; 
+        
+        const imgModelId = document.getElementById('dramaImageSelect').value;
+        const vidModelId = document.getElementById('dramaVideoSelect').value;
+
+        const imgModel = rawData.models.find(m => m.official_id === imgModelId);
+        const vidModel = rawData.models.find(m => m.official_id === vidModelId);
+
+        if(!imgModel || !vidModel || epDuration === 0 || epCount === 0) return;
+
+        // 计算总分镜数
+        const segmentsPerEp = Math.ceil(epDuration / 10);
+        const totalSegments = segmentsPerEp * epCount; 
+
+        // 换算生图 RMB 单价
+        let imgPrice = imgModel.price;
+        if(imgModel.currency === "Points") imgPrice *= 0.03125; // 假设 Vidu 积分换算比例
+
+        // 换算生视频 RMB 单价
+        let vidPrice = vidModel.price;
+        if(vidModel.currency === "Points") vidPrice *= 0.03125; 
+        if(vidModel.unit === "秒") vidPrice *= 10; // 若为单秒价，需乘10算一段
+        if(vidModel.unit === "5秒") vidPrice *= 2; 
+
+        // 基础计算
+        const rawFirstFrameCost = totalSegments * 10 * imgPrice;
+        const rawVideoCost = totalSegments * 5 * vidPrice;
+        
+        // 金额计算处理
+        const firstFrameCost = Math.ceil(rawFirstFrameCost * 100) / 100;
+        const videoCost = Math.ceil(rawVideoCost * 100) / 100;
+        const totalCost = Math.ceil((firstFrameCost + videoCost) * 100) / 100;
+
+        document.getElementById('dramaTotalCost').innerText = `¥ ${totalCost.toFixed(2)}`;
+        document.getElementById('dramaDetail').innerText = 
+            `共 ${totalSegments} 个10s分镜 | 首帧抽卡花费: ¥${firstFrameCost.toFixed(2)} | 视频抽卡花费: ¥${videoCost.toFixed(2)}`;
+    }
+
+    // 执行初始化
     loadData();
 </script>
 </body>
