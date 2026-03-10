@@ -1,35 +1,44 @@
 {
   "config": {
-    "usd_to_rmb": 7.25,
-    "last_updated": "2026-03-02"
+    "usd_to_rmb": 7.23,
+    "last_updated": "2026-03-10T00:00:00Z"
   },
   "models": [
     {
-      "official_id": "jimeng-img-v1",
-      "function": "生图",
+      "function": "生视频",
       "provider": "即梦",
-      "name": "即梦-通用-智能扩图",
-      "price": 0.01,
+      "name": "视频生成3.0 Pro (1080p)",
+      "official_id": "jimeng-vid-3.0-pro-1080",
+      "price": 1.00,
+      "currency": "RMB",
+      "unit": "秒"
+    },
+    {
+      "function": "生视频",
+      "provider": "豆包",
+      "name": "doubao-seedance-1.5-pro (720p有声)",
+      "official_id": "doubao-seedance-1.5-pro-720-sound",
+      "price": 1.73,
+      "currency": "RMB",
+      "unit": "5秒"
+    },
+    {
+      "function": "生图",
+      "provider": "可灵",
+      "name": "Kling-image-01",
+      "official_id": "kling-image-01",
+      "price": 0.20,
       "currency": "RMB",
       "unit": "张"
     },
     {
-      "official_id": "kling-v2-pro",
       "function": "生视频",
-      "provider": "可灵",
-      "name": "可灵 1.5 Pro",
-      "price": 1.5,
+      "provider": "Vidu",
+      "name": "viduq3-pro (1080p)",
+      "official_id": "viduq3-pro-1080",
+      "price": 32,
       "currency": "Points",
-      "unit": "5秒"
-    },
-    {
-      "official_id": "gpt-4o-img",
-      "function": "生图",
-      "provider": "OpenAI",
-      "name": "DALL-E 3 (HD)",
-      "price": 0.08,
-      "currency": "USD",
-      "unit": "张"
+      "unit": "秒"
     }
   ]
 }
