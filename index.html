@@ -304,7 +304,7 @@
                     </div>
                 </div>
 
-                <div class="grid-3">
+               <div class="grid-3">
                     <div class="group">
                         <label>首帧生成模型 (生图)</label>
                         <select id="dramaImageSelect" onchange="calculateDramaBudget()"></select>
@@ -312,6 +312,42 @@
                     <div class="group">
                         <label>视频生成模型 (生视频)</label>
                         <select id="dramaVideoSelect" onchange="calculateDramaBudget()"></select>
+                    </div>
+                    <div class="group">
+                        <label>👑 可灵灵感值计费档位</label>
+                        <select id="klingRateSelect" onchange="calculateDramaBudget()">
+                            <option value="0.1">默认充值 (0.1元/灵感值)</option>
+                            <optgroup label="单次购买-1个月">
+                                <option value="0.1">黄金会员 (10元/100点)</option>
+                                <option value="0.0887">铂金会员 (8.87元/100点)</option>
+                                <option value="0.0833">钻石会员 (8.33元/100点)</option>
+                                <option value="0.0505">黑金会员 (5.05元/100点)</option>
+                            </optgroup>
+                            <optgroup label="单次购买-3个月">
+                                <option value="0.0899">黄金会员 (8.99元/100点)</option>
+                                <option value="0.0798">铂金会员 (7.98元/100点)</option>
+                                <option value="0.0749">钻石会员 (7.49元/100点)</option>
+                                <option value="0.0455">黑金会员 (4.55元/100点)</option>
+                            </optgroup>
+                            <optgroup label="单次购买-12个月">
+                                <option value="0.0699">黄金会员 (6.99元/100点)</option>
+                                <option value="0.0621">铂金会员 (6.21元/100点)</option>
+                                <option value="0.0583">钻石会员 (5.83元/100点)</option>
+                                <option value="0.0355">黑金会员 (3.55元/100点)</option>
+                            </optgroup>
+                            <optgroup label="连续包月">
+                                <option value="0.0879">黄金会员 (8.79元/100点)</option>
+                                <option value="0.0780">铂金会员 (7.8元/100点)</option>
+                                <option value="0.0733">钻石会员 (7.33元/100点)</option>
+                                <option value="0.0442">黑金会员 (4.42元/100点)</option>
+                            </optgroup>
+                            <optgroup label="连续包季">
+                                <option value="0.0768">黄金会员 (7.68元/100点)</option>
+                                <option value="0.0682">铂金会员 (6.82元/100点)</option>
+                                <option value="0.0641">钻石会员 (6.41元/100点)</option>
+                                <option value="0.0391">黑金会员 (3.91元/100点)</option>
+                            </optgroup>
+                        </select>
                     </div>
                 </div>
 
@@ -505,3 +541,4 @@
 </script>
 </body>
 </html>
+
